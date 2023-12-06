@@ -112,11 +112,12 @@ uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"
 if uploaded_file is not None:
     data = load_data(uploaded_file)
     if data is not None:
+        st.markdown("<h2 style='color:blue;'>Data Load:</h2>", unsafe_allow_html=True)
         st.write(data)
-        st.markdown("<h2 style='color:blue;'>Data Management</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:blue;'>Data Preprocessing</h2>", unsafe_allow_html=True)
         #st.subheader("Data Management")
         data = delete_columns(data)
-        st.markdown("<h2 style='color:blue;'>Data after column deletion:</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:blue;'>Data After Column Deletion:</h2>", unsafe_allow_html=True)
         #st.write("Data after column deletion:")
         st.write(data)
         st.markdown("<h2 style='color:blue;'>Summary Statistics:</h2>", unsafe_allow_html=True)
