@@ -74,7 +74,7 @@ def plot_tornado_diagram(model):
     coeff = model.params
     coeff = coeff.iloc[(coeff.abs()*-1.0).argsort()]
     plt.figure(figsize=(10, 6))
-    sns.barplot(x=coeff.values, y=coeff.index, orient='h', palette='vlag')
+    sns.barplot(x=coeff.values, y=coeff.index, orient='h', palette='Paired')
     plt.title('Tornado Diagram of Standardized Coefficients', color='green')
     st.pyplot(plt)
 
