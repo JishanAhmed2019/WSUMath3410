@@ -8,7 +8,10 @@ import statsmodels.formula.api as smf
 from scipy import stats
 from statsmodels.graphics.regressionplots import influence_plot
 from sklearn.impute import SimpleImputer
-
+# Set seeds for reproducibility
+import random
+np.random.seed(42)  # For NumPy operations
+random.seed(42)     # For Python's random operations
 def load_data(uploaded_file):
     if uploaded_file is not None:
         try:
