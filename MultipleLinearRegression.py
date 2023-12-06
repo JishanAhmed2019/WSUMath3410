@@ -65,7 +65,8 @@ def perform_regression(data, formula):
     model = smf.ols(formula, data).fit()
     st.write(model.summary())
     residuals = model.resid
-    st.subheader("Diagnostic Plots")
+    st.markdown("<h2 style='color:orangered;'>Diagnostic Plots</h2>", unsafe_allow_html=True)
+    #st.subheader("Diagnostic Plots")
     plot_diagnostic_plots(model, model.model.exog, residuals)
     return residuals, model
 
@@ -131,13 +132,15 @@ if uploaded_file is not None:
 
         numeric_cols = data.select_dtypes(include=np.number).columns
         if numeric_cols.size > 0:
-            st.subheader("Correlation Matrix Heatmap")
+            st.markdown("<h2 style='color:blue;'>Correlation Matrix Heatmap</h2>", unsafe_allow_html=True)
+            #st.subheader("Correlation Matrix Heatmap")
             correlation_heatmap(data[numeric_cols])
 
         y = st.selectbox("Select target variable", numeric_cols)
-        st.subheader(f"Distribution of {y}")
+        st.markdown(f"<h2 style='color: blue;'>Distribution of Target:( {y} ) Variable</h2>", unsafe_allow_html=True)
+        #st.subheader(f"Distribution of {y}")
         plt.figure(figsize=(8, 4))
-        sns.histplot(data[y], kde=True, color='green')
+        sns.histplot(data[y], kde=True, color='lime')
         st.pyplot(plt)
 
         features = st.multiselect("Select feature variables", data.columns.drop(y))
