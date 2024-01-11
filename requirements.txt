@@ -60,4 +60,5 @@ urllib3==2.1.0
 validators==0.22.0
 watchdog==3.0.0
 yfinance==0.2.35
+pmdarima==2.0.4
 zipp==3.17.0
