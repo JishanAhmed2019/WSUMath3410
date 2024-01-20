@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Probability Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            font-size: 15px; /* smaller font size */
+        }
+        .chart-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 5px; /* smaller margin */
+            padding: 10px; /* smaller padding */
+            width: calc(50% - 10px); /* half width minus padding and margin */
+            box-sizing: border-box;
+            display: inline-block; /* make the container inline */
+        }
+        canvas {
+            width: 100%; /* full width of the parent container */
+            height: auto; /* maintain aspect ratio */
+            max-height: 200px; /* limit the height of the chart */
+        }
+        #controls, .event-selector, #stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between; /* space out controls */
+            align-items: center;
+            margin-bottom: 5px; /* smaller margin */
+        }
+        button, select, .selected-events, input[type=range] {
+            padding: 5px; /* smaller padding */
+            font-size: 15px; /* smaller font size */
+        }
+        button:hover {
+            background-color: #ddd;
+        }
+        #stats p, .signature {
+            margin: 5px 0; /* smaller margin */
+        }
+        .signature {
+            text-align: center;
+            color: #DE3163;
+        }
+        select[multiple] {
+            height: auto; /* allow the select to grow with options */
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h2>Probability Visualization</h2>
+        <div id="controls">
+            <button id="diceButton">Run Trials</button>
+            <button id="resetButton">Reset</button>
+            Speed: <input type="range" id="speed" min="1" max="10" value="5">
+        </div>
+        <div class="event-selector">
+            <label for="eventSelect">Event E (select one or more):</label>
+            <select id="eventSelect" multiple size="6">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+                <option value="6" selected>6</option>
+            </select>
+            <div class="selected-events">Selected: {5, 6}</div>
+        </div>
+        <div id="stats">
+            <p>Trials (n): <span id="n">0</span></p>
+            <p>Event E Count: <span id="countE">0</span></p>
+            <p>Probability P(E) &asymp; <span id="p">0.00</span></p>
+            <p>Dice Outcome: <span id="outcome" style="color: rgb(255, 0, 0);">-</span></p>
+        </div>
+        <canvas id="trueProb"></canvas>
+        <canvas id="observed"></canvas>
+        <div class="signature">Created by Dr. Jishan Ahmed</div>
+    </div>
+
+    <script>
+        // Initialize variables
+        let isRunning = false;
+        let trials = 0;
+        let successes = 0;
+        let myChart;
+        let eventE = [5, 6]; // Default event E
+
+        // Elements from the DOM
+        const diceButton = document.getElementById('diceButton');
+        const resetButton = document.getElementById('resetButton');
+        const speedSlider = document.getElementById('speed');
+        const nSpan = document.getElementById('n');
+        const countESpan = document.getElementById('countE');
+        const pSpan = document.getElementById('p');
+        const outcomeSpan = document.getElementById('outcome');
+        const eventSelect = document.getElementById('eventSelect');
+        const selectedEventsDisplay = document.querySelector('.selected-events');
+
+        // Update the display of selected events
+        function updateSelectedEventsDisplay() {
+            selectedEventsDisplay.textContent = `Selected: {${eventE.join(', ')}}`;
+        }
+
+        // Event listener for the Run Trials button
+        diceButton.addEventListener('click', function() {
+            isRunning = !isRunning;
+            diceButton.textContent = isRunning ? 'Stop' : 'Run Trials';
+            if (isRunning) {
+                runTrials();
+            }
+        });
+
+        // Event listener for the Reset button
+        resetButton.addEventListener('click', function() {
+            isRunning = false;
+            trials = 0;
+            successes = 0;
+            updateStats();
+            diceButton.textContent = 'Run Trials';
+            myChart.data.datasets[0].data = [0, 1];
+            myChart.update();
+        });
+
+        // Event listener for the speed slider
+        speedSlider.addEventListener('input', function() {
+            speed = 1000 - speedSlider.value * 100;
+        });
+
+        // Event listener for the event E selection
+        eventSelect.addEventListener('change', function() {
+            eventE = Array.from(eventSelect.selectedOptions).map(option => parseInt(option.value));
+            updateSelectedEventsDisplay();
+            drawTrueProb();
+        });
+
+        // Function to update the stats in the DOM
+        function updateStats() {
+            nSpan.textContent = trials;
+            countESpan.textContent = successes;
+            pSpan.textContent = (successes / trials).toFixed(4);
+        }
+
+        // Function to run the trials
+        function runTrials() {
+            if (!isRunning) return;
+            let outcome = Math.floor(Math.random() * 6) + 1;
+            trials++;
+            if (eventE.includes(outcome)) {
+                successes++;
+            }
+            outcomeSpan.textContent = outcome;
+            updateStats();
+            myChart.data.datasets[0].data = [successes / trials, 1 - successes / trials];
+            myChart.update();
+            setTimeout(runTrials, speedSlider.value * 100);
+        }
+
+        // Function to draw the true probability chart
+        function drawTrueProb() {
+            const ctx = document.getElementById('trueProb').getContext('2d');
+            if (window.myTrueProb) {
+                window.myTrueProb.destroy();
+            }
+            window.myTrueProb = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['E', 'not E'],
+                    datasets: [{
+                        label: 'True Probability',
+                        data: [eventE.length / 6, 1 - eventE.length / 6],
+                        backgroundColor: ['blue', 'darkorange'],
+						barThickness: 60 // Set a fixed value for bar thickness
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to draw the observed probability chart
+        function drawEstimatedProb() {
+            const ctx = document.getElementById('observed').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['E', 'not E'],
+                    datasets: [{
+                        label: 'Observed Probability',
+                        data: [0, 1],
+                        backgroundColor: ['blue', 'darkorange'],
+						barThickness: 60 // Set a fixed value for bar thickness
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initial drawing of the charts
+        drawTrueProb();
+        drawEstimatedProb();
+        updateSelectedEventsDisplay();
+    </script>
+</body>
+</html>
