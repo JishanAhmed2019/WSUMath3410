@@ -5,7 +5,7 @@ import plotly.express as px
 
 # Initialize session state for 'k' value if it doesn't exist
 if 'k_value' not in st.session_state:
-    st.session_state['k_value'] = 1
+    st.session_state['k_value'] = 0
 
 # Function to create the data and figure
 def create_figure(k_value):
