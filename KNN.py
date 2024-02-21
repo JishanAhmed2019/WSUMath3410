@@ -38,7 +38,7 @@ def create_figure(k_value):
     return fig
 
 # Streamlit app
-st.title('Interactive k-Nearest Neighbors Visualization')
+st.title('k-Nearest Neighbors Visualization')
 
 # Improved layout for '+' and '-' buttons
 st.write("Adjust 'k' value:")
