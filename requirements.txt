@@ -66,3 +66,13 @@ opencv-python==4.9.0.80
 librosa==0.10.1
 soundfile==0.12.1
 scikit-image==0.22.0
+torch >= 2.0.1 
+jupyterlab >= 4.0
+tiktoken >= 0.5.1
+matplotlib >= 3.7.1
+numpy >= 1.24.3
+tensorflow >= 2.15.0
+tqdm >= 4.66.1
+numpy >= 1.25, < 2.0
+pandas >= 2.2.1
+psutil >= 5.9.5
