@@ -58,7 +58,7 @@ watchdog==3.0.0
 yfinance==0.2.35
 pmdarima==1.8.5
 zipp==3.17.0
-opencv-python==4.9.0.80
+opencv-python-headless==4.9.0.80
 librosa==0.10.1
 soundfile==0.12.1
 scikit-image==0.22.0
