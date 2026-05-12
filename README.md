@@ -169,9 +169,6 @@ open static/html/DiceRoll.html
 
 Apps are deployed via **Streamlit Community Cloud** and **GitHub Pages**.
 
-- 🌐 GitHub Pages (HTML apps): [jishanahmed2019.github.io/WSUMath3410](https://jishanahmed2019.github.io/WSUMath3410/)
-- 📊 Live Streamlit deployments: see the [Deployments tab](../../deployments) on GitHub (49 active)
-
 ---
 
 ## 🛠️ Tech Stack
